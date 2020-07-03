@@ -17,7 +17,6 @@ class xkcd(commands.Cog):
                 comic = soup.find(id="comic").find("img")
                 em = Embed(title=title, description=comic["title"], colour=0x002EFF)
                 em.set_image(url=f"https:{comic['src']}")
-                em.set_author(name="xkcd.com", icon_url="https://xkcd.com/s/0b7742.png")
                 await ctx.send(embed=em)
 
     @xkcd.error
