@@ -20,6 +20,10 @@ class xkcd(commands.Cog):
                 em.set_author(name="xkcd.com", icon_url="https://xkcd.com/s/0b7742.png")
                 await ctx.send(embed=em)
 
+    @xkcd.error
+    async def xkcd_error(self, ctx, error):
+        await ctx.send(error)
+
 
 def setup(bot):
     bot.add_cog(xkcd(bot))

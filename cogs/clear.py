@@ -10,6 +10,10 @@ class clear(commands.Cog):
     async def clear(self, ctx):
         await ctx.channel.purge()
 
+    @clear.error
+    async def clear_error(self, ctx, error):
+        await ctx.send(error)
+
 
 def setup(bot):
     bot.add_cog(clear(bot))
