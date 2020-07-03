@@ -13,7 +13,7 @@ class ping(commands.Cog):
         before = time.time()
         message = await ctx.send("ms")
         ping = (time.time() - before) * 1000
-        await message.edit(content=f"`{int(ping)}ms`")
+        await message.edit(content=f"`{int(ping)} ms`")
 
     @ping.error
     async def ping_error(self, ctx, error):
