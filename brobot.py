@@ -23,7 +23,10 @@ async def on_ready():
     for filename in os.listdir(dirname):
         if filename.endswith(".py"):
             cog = "cogs." + filename.split(".", 1)[0]
-            bot.load_extension(cog)
+            try:
+                bot.load_extension(cog)
+            except:
+                pass
 
 
 uvloop.install()
