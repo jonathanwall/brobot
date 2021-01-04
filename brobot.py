@@ -23,8 +23,7 @@ bot = commands.Bot(
 )
 
 
-@bot.command()
-async def load_all_cogs(ctx):
+async def load_all_cogs():
     filepath = os.path.abspath(__file__)
     dirname = os.path.dirname(filepath) + "/cogs"
 
@@ -80,11 +79,11 @@ async def extensions(ctx):
 
 @bot.command()
 async def remove_cog(ctx, arg):
-    """ unload the specified cog """
+    """ remove the specified cog """
     cog = bot.get_cog(arg)
     if cog is not None:
         bot.remove_cog(arg)
-        await ctx.send(f"{arg} unloaded")
+        await ctx.send(f"{arg} removed")
     else:
         await ctx.send(f"{arg} not found")
 
@@ -137,4 +136,3 @@ async def reload_extension(ctx, arg):
 uvloop.install()
 start_time = datetime.now()
 bot.run(os.getenv("discord_token"))
-
