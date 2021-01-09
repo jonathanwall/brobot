@@ -59,21 +59,21 @@ async def uptime(ctx):
 @bot.command()
 async def cogs(ctx):
     """ displays the bot's loaded cogs """
-    cogs_string = ""
+    cogs = ""
     for cog in bot.cogs:
         cog = bot.get_cog(cog)
-        cogs_string += f"{cog.qualified_name} - {cog.description}\n"
-    embed = Embed(title="Cogs", description=cogs_string)
+        cogs += f"{cog.qualified_name} - {cog.description}\n"
+    embed = Embed(title="Cogs", description=cogs)
     await ctx.send(embed=embed)
 
 
 @bot.command(aliases=["exts"])
 async def extensions(ctx):
     """ displays the bot's loaded extensions """
-    exts_string = ""
+    exts = ""
     for ext in bot.extensions:
-        exts_string += f"{ext}\n"
-    embed = Embed(title="Extensions", description=exts_string)
+        exts += f"{ext}\n"
+    embed = Embed(title="Extensions", description=exts)
     await ctx.send(embed=embed)
 
 

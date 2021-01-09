@@ -27,7 +27,7 @@ class xkcd(commands.Cog):
     @tasks.loop(hours=1)
     async def stream(self):
         feed = feedparser.parse(self.feed_url, etag=self.etag)
-        if feed.status == 200:
+        if feed.status == 200 and feed.etag != self.etag:
             self.etag = feed.etag
             embed = await self.get_embed(feed.entries[0].id)
             info = await self.bot.application_info()
