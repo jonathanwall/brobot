@@ -8,7 +8,7 @@ from discord.ext import commands
 
 
 def get_prefix(client, message):
-    prefixes = [""]
+    prefixes = ["!"]
 
     if not message.guild:
         prefixes = [""]
