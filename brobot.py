@@ -1,4 +1,3 @@
-import logging
 import os
 from datetime import datetime
 
@@ -23,7 +22,7 @@ bot = commands.Bot(
 )
 
 
-async def load_all_cogs():
+async def load_cogs():
     filepath = os.path.abspath(__file__)
     dirname = os.path.dirname(filepath) + "/cogs"
 
@@ -38,17 +37,18 @@ async def load_all_cogs():
 
 @bot.event
 async def on_ready():
-    await load_all_cogs()
+    await load_cogs()
 
 
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.errors.CommandNotFound):
+    if isinstance(error, (commands.errors.CommandNotFound, commands.errors.NotOwner)):
         return
     await ctx.send(error)
 
 
 @bot.command()
+@commands.is_owner()
 async def uptime(ctx):
     """ displays the bot's uptime """
     uptime = datetime.now() - start_time
@@ -57,6 +57,7 @@ async def uptime(ctx):
 
 
 @bot.command()
+@commands.is_owner()
 async def cogs(ctx):
     """ displays the bot's loaded cogs """
     cogs = ""
@@ -68,6 +69,7 @@ async def cogs(ctx):
 
 
 @bot.command(aliases=["exts"])
+@commands.is_owner()
 async def extensions(ctx):
     """ displays the bot's loaded extensions """
     exts = ""
@@ -78,6 +80,7 @@ async def extensions(ctx):
 
 
 @bot.command()
+@commands.is_owner()
 async def remove_cog(ctx, arg):
     """ remove the specified cog """
     cog = bot.get_cog(arg)
@@ -89,6 +92,7 @@ async def remove_cog(ctx, arg):
 
 
 @bot.command()
+@commands.is_owner()
 async def unload_extension(ctx, arg):
     """ unload the specified extension """
     try:
@@ -100,6 +104,7 @@ async def unload_extension(ctx, arg):
 
 
 @bot.command()
+@commands.is_owner()
 async def load_extension(ctx, arg):
     """ load the specified extension """
     try:
@@ -117,6 +122,7 @@ async def load_extension(ctx, arg):
 
 
 @bot.command()
+@commands.is_owner()
 async def reload_extension(ctx, arg):
     """ remove the specified extension """
     try:
