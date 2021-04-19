@@ -5,8 +5,6 @@ from discord.ext import commands
 
 
 class ping(commands.Cog):
-    """ display the latency in milliseconds """
-
     def __init__(self, bot):
         self.bot = bot
 

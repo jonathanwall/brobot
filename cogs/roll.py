@@ -5,8 +5,6 @@ from discord.ext import commands
 
 
 class roll(commands.Cog):
-    """ roll a variable sided die """
-
     def __init__(self, bot):
         self.bot = bot
 

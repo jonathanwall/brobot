@@ -2,8 +2,6 @@ from discord.ext import commands
 
 
 class echo(commands.Cog):
-    """ echo """
-
     def __init__(self, bot):
         self.bot = bot
 
