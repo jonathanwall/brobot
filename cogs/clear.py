@@ -2,8 +2,6 @@ from discord.ext import commands
 
 
 class clear(commands.Cog):
-    """ clear the channel """
-
     def __init__(self, bot):
         self.bot = bot
 
