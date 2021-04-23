@@ -9,9 +9,9 @@ class eight_ball(commands.Cog):
         self.bot = bot
 
     @commands.command(name="8ball")
-    async def eight_ball(self, ctx):
+    async def eight_ball(self, ctx, *, arg="8ball"):
         """ shakes an 8ball """
-        embed = Embed(title="8ball")
+        embed = Embed(title=f"{arg}")
         choices = (
             "As I see it, yes.",
             "Ask again later.",
