@@ -9,8 +9,8 @@ class flip(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def flip(self, ctx):
-        """ flip a coin """
+    async def flip(self, ctx, arg=1):
+        """flip a coin"""
         embed = Embed(title="Flip")
         embed.description = f"**{random.choice(('heads', 'tails'))}**"
         await ctx.send(embed=embed)

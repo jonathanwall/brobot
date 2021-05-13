@@ -50,7 +50,7 @@ async def on_command_error(ctx, error):
 @bot.command()
 @commands.is_owner()
 async def uptime(ctx):
-    """ displays the bot's uptime """
+    """displays the bot's uptime"""
     uptime = datetime.now() - start_time
     embed = Embed(title="Uptime", description=f"{uptime}")
     await ctx.send(embed=embed)
@@ -59,7 +59,7 @@ async def uptime(ctx):
 @bot.command()
 @commands.is_owner()
 async def cogs(ctx):
-    """ displays the bot's loaded cogs """
+    """displays the bot's loaded cogs"""
     cogs = ""
     for cog in bot.cogs:
         cog = bot.get_cog(cog)
@@ -71,7 +71,7 @@ async def cogs(ctx):
 @bot.command(aliases=["exts"])
 @commands.is_owner()
 async def extensions(ctx):
-    """ displays the bot's loaded extensions """
+    """displays the bot's loaded extensions"""
     exts = ""
     for ext in bot.extensions:
         exts += f"{ext}\n"
@@ -82,7 +82,7 @@ async def extensions(ctx):
 @bot.command()
 @commands.is_owner()
 async def remove_cog(ctx, arg):
-    """ remove the specified cog """
+    """remove the specified cog"""
     cog = bot.get_cog(arg)
     if cog is not None:
         bot.remove_cog(arg)
@@ -94,7 +94,7 @@ async def remove_cog(ctx, arg):
 @bot.command()
 @commands.is_owner()
 async def unload_extension(ctx, arg):
-    """ unload the specified extension """
+    """unload the specified extension"""
     try:
         bot.unload_extension(arg)
     except commands.ExtensionNotLoaded:
@@ -106,7 +106,7 @@ async def unload_extension(ctx, arg):
 @bot.command()
 @commands.is_owner()
 async def load_extension(ctx, arg):
-    """ load the specified extension """
+    """load the specified extension"""
     try:
         bot.load_extension(arg)
     except commands.ExtensionNotFound:
@@ -124,7 +124,7 @@ async def load_extension(ctx, arg):
 @bot.command()
 @commands.is_owner()
 async def reload_extension(ctx, arg):
-    """ remove the specified extension """
+    """remove the specified extension"""
     try:
         bot.reload_extension(arg)
     except commands.ExtensionNotLoaded:

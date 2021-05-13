@@ -10,9 +10,8 @@ class eight_ball(commands.Cog):
 
     @commands.command(name="8ball")
     async def eight_ball(self, ctx, *, arg="8ball"):
-        """ shakes an 8ball """
-        embed = Embed(title=f"{arg}")
-        choices = (
+        """shakes an 8ball"""
+        answers = (
             "As I see it, yes.",
             "Ask again later.",
             "Better not tell you now.",
@@ -34,7 +33,8 @@ class eight_ball(commands.Cog):
             "Yes – definitely.",
             "You may rely on it.",
         )
-        embed.description = f"**{random.choice(choices)}**"
+        embed = Embed(title=f"{arg}")
+        embed.description = f"**{random.choice(answers)}**"
         await ctx.send(embed=embed)
 
 
