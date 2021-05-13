@@ -14,11 +14,18 @@ class speedtest(commands.Cog):
     @commands.command()
     async def speedtest(self, ctx):
         """speedtest"""
-        embed = Embed(title=f"Speedtest")
-        embed.description = f"**running...(30s)**"
-        message = await ctx.send(embed=embed)
         proc = Popen("/usr/local/bin/speedtest", shell=True, stdout=PIPE)
-        await asyncio.sleep(30)
+
+        embed = Embed(title=f"Speedtest")
+        message = await ctx.send(embed=embed)
+
+        secs_left = 30
+        while secs_left > 0:
+            embed.description = f"**running...({secs_left}s)**"
+            await message.edit(embed=embed)
+            await asyncio.sleep(5)
+            secs_left = secs_left - 5
+
         outs, _ = proc.communicate(timeout=0.1)
         outs = outs.decode("utf-8").splitlines()
         embed.description = f"**{outs[6]}\n{outs[8]}**"
