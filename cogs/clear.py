@@ -8,7 +8,7 @@ class clear(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def clear(self, ctx):
-        """ clears the channel """
+        """clears the channel"""
         await ctx.channel.purge()
 
 

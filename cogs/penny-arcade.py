@@ -11,7 +11,7 @@ class penny_arcade(commands.Cog):
 
     @commands.command(aliases=["penny-arcade"])
     async def penny_arcade(self, ctx):
-        """ display the latest penny-arcade comic """
+        """display the latest penny-arcade comic"""
         async with aiohttp.ClientSession() as session:
             async with session.get("https://www.penny-arcade.com/comic") as resp:
                 soup = BeautifulSoup(await resp.text(), "lxml")

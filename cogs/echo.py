@@ -7,7 +7,7 @@ class echo(commands.Cog):
 
     @commands.command()
     async def echo(self, ctx, *, arg):
-        """ echo """
+        """echo"""
         await ctx.send(arg)
 
 

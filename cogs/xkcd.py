@@ -10,7 +10,7 @@ class xkcd(commands.Cog):
 
     @commands.command()
     async def xkcd(self, ctx):
-        """ display the latest xkcd comic """
+        """display the latest xkcd comic"""
         async with aiohttp.ClientSession() as session:
             async with session.get("http://xkcd.com") as resp:
                 soup = BeautifulSoup(await resp.text(), "lxml")

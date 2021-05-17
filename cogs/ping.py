@@ -10,7 +10,7 @@ class ping(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        """ display the latency in milliseconds """
+        """display the latency in milliseconds"""
         before = time.time()
         embed = Embed(title="Ping")
         message = await ctx.send(embed=embed)

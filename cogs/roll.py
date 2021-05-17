@@ -10,7 +10,7 @@ class roll(commands.Cog):
 
     @commands.command()
     async def roll(self, ctx, arg=100):
-        """ roll a variable sided die """
+        """roll a variable sided die"""
         embed = Embed(title=f"Roll")
         embed.description = f"**{random.randint(1, int(arg))}**"
         embed.set_footer(text=f"(1 - {arg})")
