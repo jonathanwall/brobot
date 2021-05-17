@@ -124,7 +124,7 @@ async def load_extension(ctx, arg):
 @bot.command()
 @commands.is_owner()
 async def reload_extension(ctx, arg):
-    """remove the specified extension"""
+    """reload the specified extension"""
     try:
         bot.reload_extension(arg)
     except commands.ExtensionNotLoaded:
