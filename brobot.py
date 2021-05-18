@@ -97,8 +97,8 @@ async def unload_extension(ctx, arg):
     """unload the specified extension"""
     try:
         bot.unload_extension(arg)
-    except commands.ExtensionNotLoaded:
-        await ctx.send(f"{arg} not loaded")
+    except Exception as e:
+        await ctx.send(f"Error: {e}")
     else:
         await ctx.send(f"{arg} unloaded")
 
@@ -109,32 +109,20 @@ async def load_extension(ctx, arg):
     """load the specified extension"""
     try:
         bot.load_extension(arg)
-    except commands.ExtensionNotFound:
-        await ctx.send(f"{arg} not found")
-    except commands.ExtensionAlreadyLoaded:
-        await ctx.send(f"{arg} already loaded")
-    except commands.NoEntryPointError:
-        await ctx.send(f"{arg} has no entry point")
-    except commands.ExtensionFailed:
-        await ctx.send(f"{arg} has failed to load")
+    except Exception as e:
+        await ctx.send(f"Error: {e}")
     else:
         await ctx.send(f"{arg} loaded")
 
 
-@bot.command()
+@bot.command(aliases=["re"])
 @commands.is_owner()
 async def reload_extension(ctx, arg):
     """reload the specified extension"""
     try:
         bot.reload_extension(arg)
-    except commands.ExtensionNotLoaded:
-        await ctx.send(f"{arg} not loaded")
-    except commands.ExtensionNotFound:
-        await ctx.send(f"{arg} not found")
-    except commands.NoEntryPointError:
-        await ctx.send(f"{arg} has no entry point")
-    except commands.ExtensionFailed:
-        await ctx.send(f"{arg} has failed to load")
+    except Exception as e:
+        await ctx.send(f"Error: {e}")
     else:
         await ctx.send(f"{arg} reloaded")
 
