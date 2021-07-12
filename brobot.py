@@ -5,19 +5,21 @@ import uvloop
 from discord import Embed
 from discord.ext import commands
 
+description = "Brobot"
 
-def get_prefix(client, message):
+
+def get_prefix(bot, message):
     prefixes = ["!"]
 
     if not message.guild:
         prefixes = [""]
 
-    return commands.when_mentioned_or(*prefixes)(client, message)
+    return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
 bot = commands.Bot(
     command_prefix=get_prefix,
-    description="Brobot",
+    description=description,
     case_insensitive=True,
 )
 
