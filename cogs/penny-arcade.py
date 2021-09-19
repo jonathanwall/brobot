@@ -1,8 +1,7 @@
 import aiohttp
-import feedparser
 from bs4 import BeautifulSoup
 from discord import Embed
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 
 class penny_arcade(commands.Cog):
