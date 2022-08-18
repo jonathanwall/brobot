@@ -1,23 +1,29 @@
 import random
 
-from discord import Embed
-from discord.ext import commands
+import discord
 
 
-class eight_ball(commands.Cog):
-    def __init__(self, bot):
+class EightBall(discord.Cog):
+    """Shakes a Magic 8 Ball"""
+
+    def __init__(self, bot: discord.Bot):
         self.bot = bot
+        self.image_url = (
+            "https://user-images.githubusercontent.com/"
+            + "642358/185277887-ea97cb17-85e3-4f45-971a-fc0f91edd38d.png"
+        )
 
-    @commands.command(name="8ball")
-    async def eight_ball(self, ctx, *, arg="8ball"):
-        """shakes an 8ball"""
+    @discord.slash_command(name="8ball")
+    @discord.option("question", description="Ask a question", default="The Magic 8 Ball says...")
+    async def eight_ball(self, ctx: discord.ApplicationContext, question: str):
+        """Shake a Magic 8 Ball"""
         answers = (
             "As I see it, yes.",
             "Ask again later.",
             "Better not tell you now.",
             "Cannot predict now.",
             "Concentrate and ask again.",
-            "Don’t count on it.",
+            "Don't count on it.",
             "It is certain.",
             "It is decidedly so.",
             "Most likely.",
@@ -30,13 +36,14 @@ class eight_ball(commands.Cog):
             "Very doubtful.",
             "Without a doubt.",
             "Yes.",
-            "Yes – definitely.",
+            "Yes - definitely.",
             "You may rely on it.",
         )
-        embed = Embed(title=f"{arg}")
+        embed = discord.Embed(title=f"{question}")
         embed.description = f"**{random.choice(answers)}**"
-        await ctx.send(embed=embed)
+        embed.set_thumbnail(url=self.image_url)
+        await ctx.respond(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(eight_ball(bot))
+def setup(bot: discord.Bot):
+    bot.add_cog(EightBall(bot))

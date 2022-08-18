@@ -1,134 +1,79 @@
+import logging
 import os
 from datetime import datetime
 
-import uvloop
-from discord import Embed
-from discord.ext import commands
+import discord
 
-description = "Brobot"
+TOKEN = os.getenv("discord_token")
+LOGLEVEL = os.environ.get("BB_LOGLEVEL", "ERROR").upper()
 
-
-def get_prefix(bot, message):
-    prefixes = ["!"]
-
-    if not message.guild:
-        prefixes = [""]
-
-    return commands.when_mentioned_or(*prefixes)(bot, message)
-
-
-bot = commands.Bot(
-    command_prefix=get_prefix,
-    description=description,
-    case_insensitive=True,
+logging.basicConfig(
+    level=LOGLEVEL,
+    format="%(asctime)s %(levelname)s %(module)s: %(funcName)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
 
+log = logging.getLogger(__name__)
 
-async def load_cogs():
-    filepath = os.path.abspath(__file__)
-    dirname = os.path.dirname(filepath) + "/cogs"
 
-    for filename in os.listdir(dirname):
-        if filename.endswith(".py"):
-            cog = "cogs." + filename.split(".")[0]
-            try:
-                bot.load_extension(cog)
-            except:
-                pass
+class Brobot(discord.Bot):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.start_time = datetime.now()
+        self.load_cogs_in_directory("cogs")
+
+    def load_cogs_in_directory(self, directory: str):
+        filepath = os.path.abspath(__file__)
+        dirname = os.path.dirname(filepath) + f"/{directory}"
+
+        for filename in os.listdir(dirname):
+            if filename.endswith(".py"):
+                cog = f"{directory}." + filename.split(".")[0]
+                try:
+                    self.load_extension(cog)
+                except:
+                    pass
+                else:
+                    log.info(f"{cog} loaded")
+
+
+description = "Brobot"
+intents = discord.Intents.default()
+bot = Brobot(description=description, intents=intents)
+
+
+@bot.event
+async def on_connect():
+    log.debug("on_connect")
+
+
+@bot.event
+async def on_disconnect():
+    log.debug("on_disconnect")
 
 
 @bot.event
 async def on_ready():
-    await load_cogs()
+    log.debug("on_ready")
 
 
 @bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, (commands.errors.CommandNotFound, commands.errors.NotOwner)):
-        return
-    await ctx.send(error)
+async def on_resumed():
+    log.debug("on_resumed")
 
 
-@bot.command()
-@commands.is_owner()
-async def uptime(ctx):
-    """displays the bot's uptime"""
-    uptime = datetime.now() - start_time
-    embed = Embed(title="Uptime", description=f"{uptime}")
-    await ctx.send(embed=embed)
+# @bot.event
+# async def on_error(event: str, *args, **kwargs):
+#     log.debug("on_error")
+#     discord.on_error(event, *args, **kwargs)
 
 
-@bot.command()
-@commands.is_owner()
-async def cogs(ctx):
-    """displays the bot's loaded cogs"""
-    cogs = ""
-    for cog in bot.cogs:
-        cog = bot.get_cog(cog)
-        cogs += f"{cog.qualified_name} - {cog.description}\n"
-    embed = Embed(title="Cogs", description=cogs)
-    await ctx.send(embed=embed)
+# @bot.command()
+# async def uptime(ctx: discord.ApplicationContext):
+#     """Displays the uptime"""
+#     uptime = datetime.now() - bot.start_time
+#     embed = discord.Embed(title="Uptime", description=f"{uptime}")
+#     await ctx.respond(embed=embed)
 
 
-@bot.command(aliases=["exts"])
-@commands.is_owner()
-async def extensions(ctx):
-    """displays the bot's loaded extensions"""
-    exts = ""
-    for ext in bot.extensions:
-        exts += f"{ext}\n"
-    embed = Embed(title="Extensions", description=exts)
-    await ctx.send(embed=embed)
-
-
-@bot.command()
-@commands.is_owner()
-async def remove_cog(ctx, arg):
-    """remove the specified cog"""
-    cog = bot.get_cog(arg)
-    if cog is not None:
-        bot.remove_cog(arg)
-        await ctx.send(f"{arg} removed")
-    else:
-        await ctx.send(f"{arg} not found")
-
-
-@bot.command()
-@commands.is_owner()
-async def unload_extension(ctx, arg):
-    """unload the specified extension"""
-    try:
-        bot.unload_extension(arg)
-    except Exception as e:
-        await ctx.send(f"Error: {e}")
-    else:
-        await ctx.send(f"{arg} unloaded")
-
-
-@bot.command()
-@commands.is_owner()
-async def load_extension(ctx, arg):
-    """load the specified extension"""
-    try:
-        bot.load_extension(arg)
-    except Exception as e:
-        await ctx.send(f"Error: {e}")
-    else:
-        await ctx.send(f"{arg} loaded")
-
-
-@bot.command(aliases=["re"])
-@commands.is_owner()
-async def reload_extension(ctx, arg):
-    """reload the specified extension"""
-    try:
-        bot.reload_extension(arg)
-    except Exception as e:
-        await ctx.send(f"Error: {e}")
-    else:
-        await ctx.send(f"{arg} reloaded")
-
-
-uvloop.install()
-start_time = datetime.now()
-bot.run(os.getenv("discord_token"))
+bot.run(TOKEN)

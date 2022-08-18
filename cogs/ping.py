@@ -1,18 +1,19 @@
 import time
 
-from discord import Embed
-from discord.ext import commands
+import discord
 
 
-class ping(commands.Cog):
-    def __init__(self, bot):
+class Ping(discord.Cog):
+    """Display the latency in milliseconds"""
+
+    def __init__(self, bot: discord.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def ping(self, ctx):
-        """display the latency in milliseconds"""
+    @discord.command(name="ping")
+    async def ping(self, ctx: discord.ApplicationContext):
+        """Display the latency in milliseconds"""
         before = time.time()
-        embed = Embed(title="Ping")
+        embed = discord.Embed(title="Pong")
         message = await ctx.send(embed=embed)
 
         ping = (time.time() - before) * 1000
@@ -20,5 +21,5 @@ class ping(commands.Cog):
         await message.edit(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(ping(bot))
+def setup(bot: discord.Bot):
+    bot.add_cog(Ping(bot))

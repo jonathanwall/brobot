@@ -1,23 +1,23 @@
 import random
 
-from discord import Embed
-from discord.ext import commands
+import discord
 
 
-class roll(commands.Cog):
-    """roll a variable sided die"""
+class Roll(discord.Cog):
+    """Roll a variable sided die"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def roll(self, ctx, arg=100):
-        """roll a variable sided die"""
-        embed = Embed(title=f"Roll")
-        embed.description = f"**{random.randint(1, int(arg))}**"
-        embed.set_footer(text=f"(1 - {arg})")
-        await ctx.send(embed=embed)
+    @discord.slash_command(name="roll")
+    @discord.option("sides", description="Enter the number of sides", default=100)
+    async def roll(self, ctx: discord.ApplicationContext, sides: int):
+        """Roll a variable sided die"""
+        embed = discord.Embed(title=f"Roll")
+        embed.description = f"**{random.randint(1, sides)}**"
+        embed.set_footer(text=f"(1 - {sides})")
+        await ctx.respond(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(roll(bot))
+def setup(bot: discord.Bot):
+    bot.add_cog(Roll(bot))

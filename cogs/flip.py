@@ -1,20 +1,30 @@
 import random
 
-from discord import Embed
-from discord.ext import commands
+import discord
 
 
-class flip(commands.Cog):
-    def __init__(self, bot):
+class Flip(discord.Cog):
+    """Flip a coin"""
+
+    def __init__(self, bot: discord.Bot):
         self.bot = bot
 
-    @commands.command()
-    async def flip(self, ctx, arg=1):
-        """flip a coin"""
-        embed = Embed(title="Flip")
-        embed.description = f"**{random.choice(('heads', 'tails'))}**"
-        await ctx.send(embed=embed)
+    @discord.slash_command(name="flip")
+    @discord.option(
+        "times", desciption="Number of times to flip", min_value=1, max_value=100, default=1
+    )
+    async def flip(self, ctx: discord.ApplicationContext, times: int):
+        """Flip a 2-sided coin"""
+        embed = discord.Embed(title="Flip")
+        embed.description = ""
+        for _ in range(times):
+            embed.description += f"**{random.choice(('Heads', 'Tails'))}**\n"
+        await ctx.respond(embed=embed)
 
 
-def setup(bot):
-    bot.add_cog(flip(bot))
+def setup(bot: discord.Bot):
+    bot.add_cog(Flip(bot))
+
+
+# heads = "https://user-images.githubusercontent.com/642358/185279984-c516913b-9335-41ff-a2eb-70cb4a153582.png"
+# tails = "https://user-images.githubusercontent.com/642358/185281016-4b206374-6b4f-412a-b829-70eb16ca4cf8.png"
