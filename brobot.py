@@ -4,7 +4,7 @@ from datetime import datetime
 
 import discord
 
-TOKEN = os.getenv("discord_token")
+TOKEN = os.environ["BB_TOKEN"]
 LOGLEVEL = os.environ.get("BB_LOGLEVEL", "ERROR").upper()
 
 logging.basicConfig(
