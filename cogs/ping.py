@@ -1,6 +1,8 @@
 import time
-
+import logging
 import discord
+
+log = logging.getLogger(__name__)
 
 
 class Ping(discord.Cog):
@@ -9,12 +11,12 @@ class Ping(discord.Cog):
     def __init__(self, bot: discord.Bot):
         self.bot = bot
 
-    @discord.command(name="ping")
+    @discord.slash_command(name="ping")
     async def ping(self, ctx: discord.ApplicationContext):
         """Display the latency in milliseconds"""
         before = time.time()
         embed = discord.Embed(title="Pong")
-        message = await ctx.send(embed=embed)
+        message = await ctx.send_response(embed=embed)
 
         ping = (time.time() - before) * 1000
         embed.description = f"{int(ping)} ms"
