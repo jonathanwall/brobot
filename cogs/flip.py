@@ -1,6 +1,9 @@
+import logging
 import random
 
 import discord
+
+log = logging.getLogger(__name__)
 
 
 class Flip(discord.Cog):
@@ -11,7 +14,11 @@ class Flip(discord.Cog):
 
     @discord.slash_command(name="flip")
     @discord.option(
-        "times", desciption="Number of times to flip", min_value=1, max_value=100, default=1
+        "times",
+        description="Number of times to flip",
+        min_value=1,
+        max_value=100,
+        default=1,
     )
     async def flip(self, ctx: discord.ApplicationContext, times: int):
         """Flip a 2-sided coin"""
