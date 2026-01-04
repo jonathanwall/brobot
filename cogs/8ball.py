@@ -1,6 +1,9 @@
+import logging
 import random
 
 import discord
+
+log = logging.getLogger(__name__)
 
 
 class EightBall(discord.Cog):
@@ -8,13 +11,15 @@ class EightBall(discord.Cog):
 
     def __init__(self, bot: discord.Bot):
         self.bot = bot
-        self.image_url = (
-            "https://user-images.githubusercontent.com/"
-            + "642358/185277887-ea97cb17-85e3-4f45-971a-fc0f91edd38d.png"
-        )
+        # self.image_url = (
+        #     "https://user-images.githubusercontent.com/"
+        #     + "642358/185277887-ea97cb17-85e3-4f45-971a-fc0f91edd38d.png"
+        # )
 
     @discord.slash_command(name="8ball")
-    @discord.option("question", description="Ask a question", default="The Magic 8 Ball says...")
+    @discord.option(
+        "question", description="Ask a question", default="The Magic 8 Ball says..."
+    )
     async def eight_ball(self, ctx: discord.ApplicationContext, question: str):
         """Shake a Magic 8 Ball"""
         answers = (
@@ -41,8 +46,8 @@ class EightBall(discord.Cog):
         )
         embed = discord.Embed(title=f"{question}")
         embed.description = f"**{random.choice(answers)}**"
-        embed.set_thumbnail(url=self.image_url)
-        await ctx.respond(embed=embed)
+        # embed.set_thumbnail(url=self.image_url)
+        await ctx.send_response(embed=embed)
 
 
 def setup(bot: discord.Bot):
