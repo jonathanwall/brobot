@@ -1,6 +1,9 @@
+import logging
 import random
 
 import discord
+
+log = logging.getLogger(__name__)
 
 
 class Roll(discord.Cog):
