@@ -30,8 +30,8 @@ class Brobot(discord.Bot):
                 cog = f"{directory}." + filename.split(".")[0]
                 try:
                     self.load_extension(cog)
-                except:
-                    log.error(f"{cog} failed to load")
+                except Exception as e:
+                    log.error(f"{cog} failed to load: {e}")
                     pass
                 else:
                     log.info(f"{cog} loaded")
