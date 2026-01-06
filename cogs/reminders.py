@@ -29,7 +29,7 @@ def parse_when_to_datetime(when: str) -> datetime:
     Supports:
     - ISO: YYYY-MM-DD HH:MM or YYYY-MM-DD
     - US dates: MM/DD or MM/DD/YYYY (optional time)
-    - Relative durations: "2h30m", "4h15", "30 minutes", "3 days", "in 2 weeks"
+    - Relative durations: "2h30m", "4h15", "30 minutes", "3 days", "in 2 weeks", "10 seconds"
     - Natural: "in a month", "in 1 year", "tomorrow", "today", "next week"
     - Weekday names: "monday", optionally with HH:MM
     """
@@ -80,9 +80,9 @@ def parse_when_to_datetime(when: str) -> datetime:
             hour=9, minute=0, second=0, microsecond=0
         )
 
-    # Relative durations like 'in 2 weeks', '3 days', '30 minutes', 'in a month'
+    # Relative durations like 'in 2 weeks', '3 days', '30 minutes', 'in a month', '10 seconds'
     m = re.match(
-        r"^(?:in\s+)?(?:(a|an)|([0-9]+))\s*(years?|yrs?|months?|weeks?|days?|hours?|hrs?|minutes?|mins?|m)$",
+        r"^(?:in\s+)?(?:(a|an)|([0-9]+))\s*(years?|yrs?|months?|weeks?|days?|hours?|hrs?|minutes?|mins?|m|seconds?|secs?|s)$",
         s,
     )
     if m:
@@ -104,6 +104,8 @@ def parse_when_to_datetime(when: str) -> datetime:
             return now + timedelta(hours=num)
         if unit.startswith("min") or unit == "m":
             return now + timedelta(minutes=num)
+        if unit.startswith("sec") or unit == "s":
+            return now + timedelta(seconds=num)
 
     # Compact hour/min like '2h30m', '4h15', '2h', '30m'
     m = re.match(r"^(?:in\s+)?(?:(\d+)h(?:ours?)?)?(?:(\d+)m)?$", s)
