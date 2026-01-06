@@ -1,13 +1,13 @@
+import calendar
 import logging
+import re
 import sqlite3
 from datetime import datetime, timedelta
-import re
-import calendar
 from pathlib import Path
 
 import discord
 from discord.commands import SlashCommandGroup
-from discord.ext import commands, tasks
+from discord.ext import tasks
 
 log = logging.getLogger(__name__)
 
@@ -139,7 +139,7 @@ def parse_when_to_datetime(when: str) -> datetime:
     )
 
 
-class Reminders(commands.Cog):
+class Reminders(discord.Cog):
     """Manage reminders that notify you at specific times"""
 
     def __init__(self, bot):
