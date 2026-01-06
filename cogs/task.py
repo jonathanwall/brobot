@@ -15,9 +15,9 @@ class Task(commands.Cog):
     def cog_unload(self):
         self.printer.cancel()
 
-    @tasks.loop(seconds=5.0)
+    @tasks.loop(seconds=5)
     async def printer(self):
-        log.error(self.index)
+        log.debug(self.index)
         self.index += 1
 
     @printer.before_loop
