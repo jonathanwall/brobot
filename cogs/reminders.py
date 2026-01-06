@@ -1,6 +1,8 @@
 import logging
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
+import re
+import calendar
 from pathlib import Path
 
 import discord
@@ -10,6 +12,129 @@ from discord.ext import commands, tasks
 log = logging.getLogger(__name__)
 
 DB_PATH = Path(__file__).parent.parent / "reminders.db"
+
+
+def _add_months(dt: datetime, months: int) -> datetime:
+    """Return dt + months, adjusting year and day overflow."""
+    month = dt.month - 1 + months
+    year = dt.year + month // 12
+    month = month % 12 + 1
+    day = min(dt.day, calendar.monthrange(year, month)[1])
+    return dt.replace(year=year, month=month, day=day)
+
+
+def parse_when_to_datetime(when: str) -> datetime:
+    """Parse a flexible time description into a future datetime.
+
+    Supports:
+    - ISO: YYYY-MM-DD HH:MM or YYYY-MM-DD
+    - US dates: MM/DD or MM/DD/YYYY (optional time)
+    - Relative durations: "2h30m", "4h15", "30 minutes", "3 days", "in 2 weeks"
+    - Natural: "in a month", "in 1 year", "tomorrow", "today", "next week"
+    - Weekday names: "monday", optionally with HH:MM
+    """
+    s = when.strip().lower()
+    s = re.sub(r",", "", s)
+    now = datetime.now()
+
+    # Try ISO and common explicit formats
+    explicit_formats = [
+        "%Y-%m-%d %H:%M",
+        "%Y-%m-%d",
+        "%m/%d/%Y %H:%M",
+        "%m/%d/%Y",
+        "%m/%d %H:%M",
+        "%m/%d",
+    ]
+    for fmt in explicit_formats:
+        try:
+            dt = datetime.strptime(s, fmt)
+            # If format lacked year, fill with current year
+            if fmt in ("%m/%d", "%m/%d %H:%M") and dt.year == 1900:
+                dt = dt.replace(year=now.year)
+            # If no time provided, default to 09:00
+            if fmt in ("%Y-%m-%d", "%m/%d", "%m/%d/%Y"):
+                dt = dt.replace(hour=9, minute=0)
+            # If date-only and already passed, bump year
+            if dt < now and fmt in ("%m/%d", "%m/%d/%Y", "%Y-%m-%d"):
+                try:
+                    dt = dt.replace(year=dt.year + 1)
+                except Exception:
+                    pass
+            if dt < now:
+                # For explicit datetimes, only accept future
+                raise ValueError("Please specify a future date and time.")
+            return dt
+        except ValueError:
+            continue
+
+    # Natural keywords
+    if s in ("now", "today"):
+        return now
+    if s == "tomorrow":
+        return (now + timedelta(days=1)).replace(
+            hour=9, minute=0, second=0, microsecond=0
+        )
+    if s == "next week":
+        return (now + timedelta(weeks=1)).replace(
+            hour=9, minute=0, second=0, microsecond=0
+        )
+
+    # Relative durations like 'in 2 weeks', '3 days', '30 minutes', 'in a month'
+    m = re.match(
+        r"^(?:in\s+)?(?:(a|an)|([0-9]+))\s*(years?|yrs?|months?|weeks?|days?|hours?|hrs?|minutes?|mins?|m)$",
+        s,
+    )
+    if m:
+        num = 1 if m.group(1) else int(m.group(2))
+        unit = m.group(3)
+        if unit.startswith("year") or unit.startswith("yr"):
+            try:
+                return now.replace(year=now.year + num)
+            except Exception:
+                # Feb 29 handling
+                return now.replace(year=now.year + num, day=now.day - 1)
+        if unit.startswith("month"):
+            return _add_months(now, num)
+        if unit.startswith("week"):
+            return now + timedelta(weeks=num)
+        if unit.startswith("day"):
+            return now + timedelta(days=num)
+        if unit.startswith("hour"):
+            return now + timedelta(hours=num)
+        if unit.startswith("min") or unit == "m":
+            return now + timedelta(minutes=num)
+
+    # Compact hour/min like '2h30m', '4h15', '2h', '30m'
+    m = re.match(r"^(?:in\s+)?(?:(\d+)h(?:ours?)?)?(?:(\d+)m)?$", s)
+    if m and (m.group(1) or m.group(2)):
+        hours = int(m.group(1)) if m.group(1) else 0
+        mins = int(m.group(2)) if m.group(2) else 0
+        return now + timedelta(hours=hours, minutes=mins)
+
+    # Weekday names optionally with time 'monday' or 'monday 14:30'
+    days = [d.lower() for d in calendar.day_name]
+    wd_match = re.match(
+        r"^(?:next\s+)?(" + "|".join(days) + r")(?:\s+(\d{1,2}:\d{2}))?$", s
+    )
+    if wd_match:
+        name = wd_match.group(1)
+        timepart = wd_match.group(2)
+        target_wd = days.index(name)
+        days_ahead = (target_wd - now.weekday() + 7) % 7
+        if days_ahead == 0:
+            days_ahead = 7
+        target = now + timedelta(days=days_ahead)
+        if timepart:
+            hh, mm = map(int, timepart.split(":"))
+            target = target.replace(hour=hh, minute=mm, second=0, microsecond=0)
+        else:
+            target = target.replace(hour=9, minute=0, second=0, microsecond=0)
+        return target
+
+    raise ValueError(
+        "Could not understand time. Examples: '2026-01-05 14:30', '12/3', 'in 2 weeks', '2h30m', 'monday 14:00'"
+    )
 
 
 class Reminders(commands.Cog):
@@ -51,7 +176,7 @@ class Reminders(commands.Cog):
     )
     @discord.option(
         "when",
-        description="When? Format: YYYY-MM-DD HH:MM (e.g., 2026-01-05 14:30)",
+        description="When? Understand formats like '2026-01-05 14:30', 'in 2 weeks', '2h30m', 'monday 14:00'",
         required=True,
     )
     async def reminders_create(
@@ -59,11 +184,11 @@ class Reminders(commands.Cog):
     ):
         """Add a reminder for a specific date and time"""
         try:
-            reminder_dt = datetime.strptime(when, "%Y-%m-%d %H:%M")
-        except ValueError:
+            reminder_dt = parse_when_to_datetime(when)
+        except ValueError as exc:
             embed = discord.Embed(
                 title="❌ Invalid Time Format",
-                description="Please use format: `YYYY-MM-DD HH:MM`\nExample: `2025-01-05 14:30`",
+                description=str(exc),
                 color=discord.Color.red(),
             )
             await ctx.respond(embed=embed, ephemeral=True)
