@@ -25,6 +25,10 @@ class Brobot(discord.Bot):
         filepath = os.path.abspath(__file__)
         dirname = os.path.dirname(filepath) + f"/{directory}"
 
+        if not os.path.isdir(dirname):
+            log.warning(f"Cogs directory not found: {dirname}")
+            return
+
         for filename in os.listdir(dirname):
             if filename.endswith(".py"):
                 cog = f"{directory}." + filename.split(".")[0]
@@ -32,7 +36,6 @@ class Brobot(discord.Bot):
                     self.load_extension(cog)
                 except Exception as e:
                     log.error(f"{cog} failed to load: {e}")
-                    pass
                 else:
                     log.info(f"{cog} loaded")
 
