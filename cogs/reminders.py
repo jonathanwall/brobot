@@ -4,6 +4,7 @@ from datetime import datetime
 from pathlib import Path
 
 import discord
+from discord.commands import SlashCommandGroup
 from discord.ext import commands, tasks
 
 log = logging.getLogger(__name__)
@@ -42,16 +43,20 @@ class Reminders(commands.Cog):
         conn.commit()
         conn.close()
 
-    @discord.slash_command(name="remind")
+    reminders = SlashCommandGroup("reminders", "Commands for managing reminders")
+
+    @reminders.command(name="create")
     @discord.option(
         "text", description="What do you want to be reminded about?", required=True
     )
     @discord.option(
         "when",
-        description="When? Format: YYYY-MM-DD HH:MM (e.g., 2025-01-05 14:30)",
+        description="When? Format: YYYY-MM-DD HH:MM (e.g., 2026-01-05 14:30)",
         required=True,
     )
-    async def remind(self, ctx: discord.ApplicationContext, text: str, when: str):
+    async def reminders_create(
+        self, ctx: discord.ApplicationContext, text: str, when: str
+    ):
         """Add a reminder for a specific date and time"""
         try:
             reminder_dt = datetime.strptime(when, "%Y-%m-%d %H:%M")
@@ -99,8 +104,8 @@ class Reminders(commands.Cog):
         embed.add_field(name="Reminder", value=f"_{text}_", inline=False)
         await ctx.respond(embed=embed, ephemeral=True)
 
-    @discord.slash_command(name="reminders")
-    async def list_reminders(self, ctx: discord.ApplicationContext):
+    @reminders.command(name="list")
+    async def reminders_list(self, ctx: discord.ApplicationContext):
         """View all your active reminders"""
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
@@ -134,11 +139,11 @@ class Reminders(commands.Cog):
 
         await ctx.respond(embed=embed, ephemeral=True)
 
-    @discord.slash_command(name="delete_reminder")
+    @reminders.command(name="delete")
     @discord.option(
         "reminder_id", description="ID of the reminder to delete", required=True
     )
-    async def delete_reminder(self, ctx: discord.ApplicationContext, reminder_id: int):
+    async def reminders_delete(self, ctx: discord.ApplicationContext, reminder_id: int):
         """Delete a reminder"""
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
@@ -177,7 +182,7 @@ class Reminders(commands.Cog):
         )
         await ctx.respond(embed=embed, ephemeral=True)
 
-    @tasks.loop(seconds=10)
+    @tasks.loop(seconds=1)
     async def check_reminders(self):
         """Check for reminders that need to be sent"""
         conn = sqlite3.connect(DB_PATH)
@@ -199,13 +204,11 @@ class Reminders(commands.Cog):
             try:
                 channel = self.bot.get_channel(channel_id)
                 if channel:
-                    user = await self.bot.fetch_user(user_id)
                     embed = discord.Embed(
                         title="🔔 Reminder",
                         description=text,
                         color=discord.Color.gold(),
                     )
-                    embed.set_footer(text=f"Reminder for {user.name}")
                     await channel.send(f"<@{user_id}>", embed=embed)
                     log.info(f"Sent reminder {reminder_id} to {user_id}")
             except Exception as e:
