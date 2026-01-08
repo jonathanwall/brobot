@@ -11,10 +11,10 @@ class EightBall(discord.Cog):
 
     def __init__(self, bot: discord.Bot):
         self.bot = bot
-        # self.image_url = (
-        #     "https://user-images.githubusercontent.com/"
-        #     + "642358/185277887-ea97cb17-85e3-4f45-971a-fc0f91edd38d.png"
-        # )
+        self.image_url = (
+            "https://user-images.githubusercontent.com/"
+            + "642358/185277887-ea97cb17-85e3-4f45-971a-fc0f91edd38d.png"
+        )
 
     @discord.slash_command(name="8ball")
     @discord.option(
@@ -46,7 +46,7 @@ class EightBall(discord.Cog):
         )
         embed = discord.Embed(title=f"{question}")
         embed.description = f"**{random.choice(answers)}**"
-        # embed.set_thumbnail(url=self.image_url)
+        embed.set_thumbnail(url=self.image_url)
         await ctx.send_response(embed=embed)
 
 
