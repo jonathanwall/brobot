@@ -72,9 +72,11 @@ async def on_connect():
     try:
         app_info = await bot.application_info()
         owner = app_info.owner
+        # If the owner is a Team, use the team's owner user
         if isinstance(owner, discord.Team):
             owner = owner.owner
-            await owner.send(f"{bot.user} connected")
+        if owner:
+            await owner.send(f"{bot.user} connected at {datetime.now().isoformat()}")
             log.info(f"Sent connect DM to owner {owner}")
     except Exception as e:
         log.error(f"Failed to fetch application info: {e}")
