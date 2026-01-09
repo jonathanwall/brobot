@@ -110,11 +110,14 @@ class Settings(discord.Cog):
     async def settings_bot_ping(self, ctx: discord.ApplicationContext):
         """Display the latency in milliseconds"""
         before = time.time()
-        embed = discord.Embed(title="Pong")
+        embed = discord.Embed(
+            title="Ping", description="calculating...", color=discord.Color.blue()
+        )
         message = await ctx.send_response(embed=embed, ephemeral=True)
 
         ping = (time.time() - before) * 1000
         embed.description = f"{int(ping)} ms"
+        embed.color = discord.Color.green() if ping < 300 else discord.Color.red()
         await message.edit(embed=embed)
 
     @bot.command(name="latency")
