@@ -22,6 +22,7 @@ class System(discord.Cog):
         """Show supervisorctl status"""
         try:
             output = subprocess.getoutput("/bin/bash -c supervisorctl")
+            log.error(output)
 
             # Truncate if output is too long for Discord embed
             if len(output) > 4096:
