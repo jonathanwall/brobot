@@ -1,6 +1,7 @@
 import logging
 import sqlite3
 import subprocess
+import time
 from pathlib import Path
 
 import discord
@@ -103,6 +104,24 @@ class Settings(discord.Cog):
             )
             await ctx.respond(embed=embed, ephemeral=True)
             log.error(f"Git pull failed: {e}")
+
+    @bot.command(name="ping")
+    @commands.is_owner()
+    async def settings_bot_ping(self, ctx: discord.ApplicationContext):
+        """Display the latency in milliseconds"""
+        before = time.time()
+        embed = discord.Embed(title="Pong")
+        message = await ctx.send_response(embed=embed, ephemeral=True)
+
+        ping = (time.time() - before) * 1000
+        embed.description = f"{int(ping)} ms"
+        await message.edit(embed=embed)
+
+    @bot.command(name="latency")
+    @commands.is_owner()
+    async def settings_bot_latency(self, ctx: discord.ApplicationContext):
+        """Display the latency in milliseconds"""
+        await ctx.send_response(f"{self.bot.latency * 1000:.2f} ms", ephemeral=True)
 
 
 def setup(bot: discord.Bot):
