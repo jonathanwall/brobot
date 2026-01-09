@@ -37,6 +37,28 @@ class System(discord.Cog):
         )
         await ctx.respond(embed=embed, ephemeral=True)
 
+    @system.command(name="ls")
+    @commands.is_owner()
+    async def system_ls(self, ctx: discord.ApplicationContext, path: str = "."):
+        """List files in the specified directory"""
+        import os
+
+        try:
+            files = os.listdir(path)
+            file_list = "\n".join(files) if files else "No files found."
+            embed = discord.Embed(
+                title=f"Files in `{path}`",
+                description=f"```\n{file_list}\n```",
+                color=discord.Color.blue(),
+            )
+        except Exception as e:
+            embed = discord.Embed(
+                title="Error",
+                description=f"```{str(e)}```",
+                color=discord.Color.red(),
+            )
+        await ctx.respond(embed=embed, ephemeral=True)
+
     @system.command(name="pull")
     @commands.is_owner()
     async def system_pull(self, ctx: discord.ApplicationContext):
