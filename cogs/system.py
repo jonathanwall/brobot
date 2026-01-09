@@ -30,7 +30,6 @@ class System(discord.Cog):
         try:
             result = subprocess.run(
                 ["git", "pull"],
-                cwd="./brobot",
                 capture_output=True,
                 text=True,
                 timeout=30,
