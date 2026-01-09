@@ -34,7 +34,7 @@ class Cogs(discord.Cog):
             )
             embed.set_footer(text=f"Total: {len(loaded_cogs)} cogs")
 
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, ephemeral=True)
 
     @cogs_group.command(name="reload")
     @commands.is_owner()
@@ -62,7 +62,7 @@ class Cogs(discord.Cog):
             )
             log.error(f"Failed to reload cog {cog}: {e}")
 
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, ephemeral=True)
 
     @cogs_group.command(name="unload")
     @commands.is_owner()
@@ -90,7 +90,7 @@ class Cogs(discord.Cog):
             )
             log.error(f"Failed to unload cog {cog}: {e}")
 
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, ephemeral=True)
 
     @cogs_group.command(name="load")
     @commands.is_owner()
@@ -113,7 +113,7 @@ class Cogs(discord.Cog):
             )
             log.error(f"Failed to load cog {cog}: {e}")
 
-        await ctx.respond(embed=embed)
+        await ctx.respond(embed=embed, ephemeral=True)
 
 
 def setup(bot: discord.Bot):
