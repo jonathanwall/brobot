@@ -67,4 +67,17 @@ async def on_unknown_application_command(interaction: discord.Interaction):
     log.warning(f"Unknown command invoked by {interaction.user}")
 
 
+@bot.listen()
+async def on_connect():
+    try:
+        app_info = await bot.application_info()
+        owner = app_info.owner
+        if isinstance(owner, discord.Team):
+            owner = owner.owner
+            await owner.send(f"{bot.user} connected")
+            log.info(f"Sent connect DM to owner {owner}")
+    except Exception as e:
+        log.error(f"Failed to fetch application info: {e}")
+
+
 bot.run(TOKEN)
