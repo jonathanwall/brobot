@@ -23,6 +23,20 @@ class System(discord.Cog):
         await ctx.respond("Restarting bot...", ephemeral=True)
         await self.bot.close()
 
+    @system.command(name="cwd")
+    @commands.is_owner()
+    async def system_cwd(self, ctx: discord.ApplicationContext):
+        """Get the current working directory of the bot"""
+        import os
+
+        cwd = os.getcwd()
+        embed = discord.Embed(
+            title="Current Working Directory",
+            description=f"`{cwd}`",
+            color=discord.Color.blue(),
+        )
+        await ctx.respond(embed=embed, ephemeral=True)
+
     @system.command(name="pull")
     @commands.is_owner()
     async def system_pull(self, ctx: discord.ApplicationContext):
