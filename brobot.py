@@ -5,7 +5,7 @@ from datetime import datetime
 import discord
 
 TOKEN = os.environ["BROBOT_TOKEN"]
-LOGLEVEL = os.environ.get("BB_LOGLEVEL", "ERROR").upper()
+LOGLEVEL = os.environ.get("BROBOT_LOGLEVEL", "INFO").upper()
 
 logging.basicConfig(
     level=LOGLEVEL,
