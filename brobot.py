@@ -44,4 +44,27 @@ description = "Brobot"
 intents = discord.Intents.default()
 bot = Brobot(description=description, intents=intents)
 
+
+@bot.listen()
+async def on_application_command(ctx: discord.ApplicationContext):
+    log.info(f"Command '{ctx.command.name}' invoked by {ctx.author}")
+
+
+@bot.listen()
+async def on_application_command_completion(ctx: discord.ApplicationContext):
+    log.info(f"Command '{ctx.command.name}' completed for {ctx.author}")
+
+
+@bot.listen()
+async def on_application_command_error(
+    ctx: discord.ApplicationContext, error: Exception
+):
+    log.error(f"Error in command '{ctx.command.name}' invoked by {ctx.author}: {error}")
+
+
+@bot.listen()
+async def on_unknown_application_command(interaction: discord.Interaction):
+    log.warning(f"Unknown command invoked by {interaction.user}")
+
+
 bot.run(TOKEN)
