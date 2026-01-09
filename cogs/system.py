@@ -21,8 +21,7 @@ class System(discord.Cog):
     async def system_supervisor(self, ctx: discord.ApplicationContext):
         """Show supervisorctl status"""
         try:
-            output = subprocess.getoutput("/bin/bash -c supervisorctl")
-            log.error(output)
+            output = subprocess.getoutput("/bin/bash -c supervisorctl status")
 
             # Truncate if output is too long for Discord embed
             if len(output) > 4096:
