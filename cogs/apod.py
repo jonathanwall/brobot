@@ -107,7 +107,7 @@ class APOD(discord.Cog):
                         color=discord.Color.red(),
                     )
                     await ctx.respond(embed=embed, ephemeral=True)
-                    log.error(f"APOD API returned status {response.status}")
+                    log.error(f"APOD API returned status {response.text}")
                     return
 
                 data = await response.json()
