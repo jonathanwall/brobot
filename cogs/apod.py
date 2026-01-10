@@ -9,7 +9,7 @@ from datetime import datetime
 log = logging.getLogger(__name__)
 
 NASA_APOD_URL = "https://apod-api.sudos.site/v1/apod/"
-API_KEY = os.environ.get("APOD_API_KEY")
+API_KEY = os.environ["APOD_API_KEY"]
 
 
 def extract_youtube_id(url: str) -> str:
