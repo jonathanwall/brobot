@@ -103,7 +103,7 @@ class APOD(discord.Cog):
                 if response.status != 200:
                     embed = discord.Embed(
                         title="❌ Error",
-                        description="Failed to fetch the Astronomy Picture of the Day.",
+                        description=f"Failed to fetch the Astronomy Picture of the Day: {response.status}",
                         color=discord.Color.red(),
                     )
                     await ctx.respond(embed=embed, ephemeral=True)
